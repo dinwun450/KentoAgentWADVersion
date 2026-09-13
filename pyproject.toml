@@ -1,0 +1,56 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "kentoagent"
+version = "0.1.0"
+description = "Offline-first multi-agent earthquake response simulation"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "marimo>=0.20,<1",
+  "pydantic>=2.9,<3",
+  "python-dotenv>=1.0,<2",
+  "temporalio>=1.17,<2",
+  "uvicorn[standard]>=0.30,<1",
+  "weave>=0.52,<1",
+]
+
+[project.optional-dependencies]
+agents = [
+  "llama-index-core>=0.14,<1",
+  "llama-index-llms-openai>=0.6,<1",
+  "numpy>=1.26,<2.5",
+]
+snowflake = ["snowflake-connector-python>=3.6,<4"]
+lab = ["altair>=5,<7", "pandas>=2.2,<3"]
+dev = ["httpx2>=2,<3", "mypy>=1.11,<2", "pytest>=8,<10", "ruff>=0.8,<1"]
+
+[project.scripts]
+kentoagent = "kentoagent.cli:main"
+kentoagent-temporal-worker = "kentoagent.durable.worker:main"
+kentoagent-temporal-start = "kentoagent.durable.starter:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/kentoagent"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+"marimo/*.py" = ["B018"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+packages = ["kentoagent"]
